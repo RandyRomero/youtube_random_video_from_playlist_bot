@@ -1,0 +1,7 @@
+services:
+  bot:
+      build: ./
+      environment:
+        - BOT_TOKEN=${BOT_TOKEN}
+        - ADMIN_TELEGRAM_ID=${ADMIN_TELEGRAM_ID}
+      command: sh -c ". .venv/bin/activate && python -m yt_playlist_bot"
