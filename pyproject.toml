@@ -30,6 +30,10 @@ disable_error_code = [
     "method-assign"  # when enabled, does not allow to assign to a method of a class
 ]
 
+[[tool.mypy.overrides]]
+module = "pytube"
+ignore_missing_imports = true
+
 [tool.ruff]
 lint.select = ["B", "C", "E", "ERA", "F", "T", "W"]
 
