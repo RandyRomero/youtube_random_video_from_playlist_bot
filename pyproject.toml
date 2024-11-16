@@ -1,0 +1,54 @@
+[tool.isort]
+line_length = 100
+multi_line_output = "3"
+known_first_party = "yt_playlist_bot"
+include_trailing_comma = "true"
+sections = ["FUTURE", "STDLIB", "THIRDPARTY", "FIRSTPARTY", "LOCALFOLDER"]
+default_section = "THIRDPARTY"
+order_by_type = "false"
+
+
+[tool.black]
+line-length = 100
+exclude = '''
+(
+    /(
+        \.git
+    )/
+)
+'''
+
+[tool.mypy]
+python_version = 3.12
+allow_redefinition = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+disallow_untyped_calls = true
+warn_unused_ignores = true
+show_error_codes = true
+disable_error_code = [
+    "method-assign"  # when enabled, does not allow to assign to a method of a class
+]
+
+[tool.ruff]
+lint.select = ["B", "C", "E", "ERA", "F", "T", "W"]
+
+line-length = 100
+exclude = [
+     ".git",
+     ".git-rewrite",
+     ".mypy_cache",
+     ".pyenv",
+     ".pytest_cache",
+     ".pytype",
+     ".ruff_cache",
+     ".venv",
+     ".vscode",
+     "pypackages",
+     "_build",
+     "build",
+     "dist",
+     "site-packages",
+     "venv",
+     'env.py',
+ ]
