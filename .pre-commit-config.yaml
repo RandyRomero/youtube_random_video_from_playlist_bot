@@ -23,3 +23,5 @@ repos:
         - id: mypy
           pass_filenames: false
           args: [".", "--config=pyproject.toml"]
+          additional_dependencies:
+            - structlog~=24.4.0
