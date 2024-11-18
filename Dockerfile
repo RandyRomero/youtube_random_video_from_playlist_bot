@@ -1,7 +1,6 @@
 FROM python:3.12.5-slim-bookworm
 
-RUN apt-get update \
-    && apt-get -y install gcc libpq-dev
+RUN apt-get update
 
 WORKDIR src
 
@@ -14,5 +13,3 @@ RUN pip install -U pip \
 	&& uv pip install -r requirements-dev.txt
 
 COPY . .
-
-CMD ["python", "main.py"]
