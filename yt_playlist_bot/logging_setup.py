@@ -26,9 +26,9 @@ def setup_logging(log_level: str, json_logs: bool) -> None:
 
     structlog.configure(
         processors=shared_processors
-                   + [
-                       structlog.stdlib.ProcessorFormatter.wrap_for_formatter,
-                   ],
+        + [
+            structlog.stdlib.ProcessorFormatter.wrap_for_formatter,
+        ],
         logger_factory=structlog.stdlib.LoggerFactory(),
         cache_logger_on_first_use=True,
     )

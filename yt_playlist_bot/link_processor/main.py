@@ -1,6 +1,5 @@
 import argparse
 import random
-import uuid
 
 import structlog
 from pytube import Playlist

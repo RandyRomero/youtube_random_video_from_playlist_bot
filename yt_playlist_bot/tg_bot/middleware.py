@@ -10,7 +10,7 @@ logger = structlog.getLogger(__name__)
 async def request_id_insert_middleware(
     handler: tp.Callable[[Update, dict[str, tp.Any]], tp.Awaitable[tp.Any]],
     event: Update,
-    data: dict[str, tp.Any]
+    data: dict[str, tp.Any],
 ) -> tp.Any:
     request_uuid = str(uuid.uuid4())
     structlog.contextvars.clear_contextvars()

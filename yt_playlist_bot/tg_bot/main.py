@@ -2,8 +2,7 @@ import structlog
 from aiogram import Bot, Dispatcher
 from aiogram.filters import CommandStart
 
-from yt_playlist_bot.tg_bot import handlers
-from yt_playlist_bot.tg_bot import middleware
+from yt_playlist_bot.tg_bot import handlers, middleware
 
 logger = structlog.getLogger(__name__)
 
