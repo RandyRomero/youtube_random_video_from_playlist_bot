@@ -1,11 +1,10 @@
 import argparse
 import random
-import uuid
 
 import structlog
 from pytube import Playlist
 
-logger = structlog.get_logger(__name__)
+logger = structlog.getLogger(__name__)
 
 YOUTUBE_PLAYLIST_LINK_TEMPLATE = "https://www.youtube.com/playlist?list="
 
@@ -35,26 +34,24 @@ def get_random_link_from_youtube_playlist(link_to_playlist: str) -> str:
     return random.choice(playlist.video_urls)
 
 
-def main() -> None:
-    # using global is a bad practice and I will appreciate if you can give me a hint
-    # how do I attach request_id to every logging message in the module without
-    # using globals
-    global logger
-
-    args = parse_args()
-
-    logger = logger.bind(request_id=str(uuid.uuid4()))
-    logger.info("Start working...")
-
-    playlist_link = args.link
-    logger.debug("Given link", playlist_list=playlist_link)
+def process_link(playlist_link: str) -> str:
+    """Does everything to get the link to the random video from the given playlist."""
+    logger.debug("Given link", playlist_link=playlist_link)
 
     validate_link(playlist_link)
     logger.debug("Link is valid.")
 
     random_link = get_random_link_from_youtube_playlist(playlist_link)
-    logger.info(random_link)
+    return random_link
+
+
+def main(args: argparse.Namespace) -> str:
+    logger.info("Start working...")
+
+    playlist_link = args.link
+    return process_link(playlist_link)
 
 
 if __name__ == "__main__":
-    main()
+    args = parse_args()
+    main(args)
