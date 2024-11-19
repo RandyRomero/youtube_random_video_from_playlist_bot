@@ -29,7 +29,7 @@ def get_random_link_from_youtube_playlist(link_to_playlist: str) -> str:
     total_videos_num = len(playlist.video_urls)
     if not total_videos_num:
         raise ValueError("Playlist is either empty or private.")
-    logger.info(f"There are {len(playlist.video_urls)} videos in total.")
+    logger.info("There are %d videos in total.", len(playlist.video_urls))
     logger.debug("Picking a random video from the playlist...")
     return random.choice(playlist.video_urls)
 
