@@ -7,3 +7,4 @@ services:
         - LOG_LEVEL=${LOG_LEVEL}
         - JSON_LOGS=&{JSON_LOGS}
       command: sh -c ". .venv/bin/activate && python -m yt_playlist_bot"
+      restart: always
