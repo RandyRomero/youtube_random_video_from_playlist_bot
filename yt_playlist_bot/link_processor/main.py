@@ -4,9 +4,9 @@ import random
 import structlog
 from pytube import Playlist
 
-logger = structlog.getLogger(__name__)
+from yt_playlist_bot.constants import YOUTUBE_PLAYLIST_LINK_TEMPLATE
 
-YOUTUBE_PLAYLIST_LINK_TEMPLATE = "https://www.youtube.com/playlist?list="
+logger = structlog.getLogger(__name__)
 
 
 def parse_args() -> argparse.Namespace:

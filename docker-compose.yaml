@@ -1,10 +1,53 @@
 services:
-  bot:
+  tg_bot:
       build: ./
+      restart: always
+      depends_on:
+        broker:
+          condition: service_healthy
       environment:
         - BOT_TOKEN=${BOT_TOKEN}
         - ADMIN_TELEGRAM_ID=${ADMIN_TELEGRAM_ID}
         - LOG_LEVEL=${LOG_LEVEL}
         - JSON_LOGS=&{JSON_LOGS}
-      command: sh -c ". .venv/bin/activate && python -m yt_playlist_bot"
-      restart: always
+        - RABBIT_HOST=broker
+        - RABBIT_PORT=${RABBIT_PORT}
+        - RABBIT_USER=${RABBIT_USER}
+        - RABBIT_PASS=${RABBIT_PASS}
+      command: sh -c ". .venv/bin/activate && python -m yt_playlist_bot.tg_bot"
+
+  link_event_listener:
+    build: ./
+    restart: always
+    depends_on:
+      tg_bot:
+        condition: service_started
+    environment:
+      - BOT_TOKEN=${BOT_TOKEN}
+      - LOG_LEVEL=${LOG_LEVEL}
+      - JSON_LOGS=&{JSON_LOGS}
+      - RABBIT_HOST=broker
+      - RABBIT_PORT=${RABBIT_PORT}
+      - RABBIT_USER=${RABBIT_USER}
+      - RABBIT_PASS=${RABBIT_PASS}
+    command: sh -c ". .venv/bin/activate && python -m yt_playlist_bot.event_listeners"
+
+  broker:
+      image: rabbitmq:3.13.7-management-alpine
+      container_name: 'rabbitmq'
+      healthcheck:
+        test: rabbitmq-diagnostics -q ping
+        interval: 5s
+        timeout: 5s
+        retries: 5
+      ports:
+        - '${RABBIT_PORT}:5672'
+        - '${RABBIT_MANAGEMENT_PORT}:15672'
+      environment:
+        - RABBITMQ_DEFAULT_USER=${RABBIT_USER}
+        - RABBITMQ_DEFAULT_PASS=${RABBIT_PASS}
+      volumes:
+        - rabbitmq_data:/var/lib/rabbitmq
+
+volumes:
+  rabbitmq_data:
