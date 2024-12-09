@@ -1,8 +1,8 @@
 import asyncio
 import typing
 
-import aio_pika.abc
 import structlog
+from aio_pika.abc import AbstractQueue
 
 from yt_playlist_bot import settings
 from yt_playlist_bot.event_processors.youtube_playlist_link_processor import (
@@ -38,7 +38,7 @@ async def main(event_loop: asyncio.AbstractEventLoop) -> None:
         **EXCHANGE_MAPPING[YOUTUBE_PROCESSOR_EXCHANGE],  # type: ignore
     )
 
-    queue: aio_pika.abc.AbstractQueue = await channel.declare_queue(
+    queue: AbstractQueue = await channel.declare_queue(
         settings.PLAYLIST_QUEUE,
         durable=True,
         exclusive=False,
