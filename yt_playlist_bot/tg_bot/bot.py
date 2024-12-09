@@ -39,6 +39,11 @@ class TelegramBot:
         # https://docs.aiogram.dev/en/latest/dispatcher/middlewares.html
         self.dispatcher.update.outer_middleware()(middleware.request_id_insert_middleware)  # type: ignore
 
+    async def close(self) -> None:
+        """Gracefully closes the connection the bot is using."""
+        await self.bot.session.close()
+        await self.handlers.controller.rabbit_publisher.close()
+
 
 async def get_new_bot(
     bot_token: str,
