@@ -19,5 +19,7 @@ async def process_get_a_video_events(
 
     msg_text = f"There is your random video from your playlist: {link}"
 
+    # todo: find a way not to initialize it every time
     bot = Bot(token=settings.BOT_TOKEN)
     await bot.send_message(chat_id=message_body["requester_telegram_id"], text=msg_text)
+    await bot.close()
