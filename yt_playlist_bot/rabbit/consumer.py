@@ -20,7 +20,7 @@ class CallbackType(typing.Protocol):
         message_body: dict[typing.Any, typing.Any],
         routing_key: str,
     ) -> typing.Awaitable[None]:
-        """A signature of a function that will be called to process rabbit message."""
+        """A signature of a function that will be called to process a rabbit message."""
         pass
 
 
@@ -29,7 +29,7 @@ async def consumer(
     event_loop: asyncio.AbstractEventLoop,
     callback_func: CallbackType,
 ) -> None:
-    """Run consumer and get messages from queue."""
+    """Get messages from the queue and send them to message processor."""
     async with queue.iterator() as queue_iter:
         message: AbstractIncomingMessage
         async for message in queue_iter:
@@ -38,13 +38,8 @@ async def consumer(
                 reject_on_redelivered=True,
                 ignore_processed=True,
             ):
-                try:
-                    message_body = json.loads(message.body)
-                except json.decoder.JSONDecodeError:
-                    await message.nack()
-                    continue
+                logger.info("Got new message.", queue=queue.name)
 
-                logger.info("Got new message.", queue=queue.name, routing_key=message.routing_key)
                 if not message.message_id:
                     await message.nack()
                     raise AttributeError("Message has no message_id.")
@@ -54,7 +49,17 @@ async def consumer(
                     raise AttributeError("Message has no routing_key.")
 
                 structlog.contextvars.clear_contextvars()
-                structlog.contextvars.bind_contextvars(rabbit_message_id=message.message_id)
+                structlog.contextvars.bind_contextvars(
+                    rabbit_message_id=message.message_id,
+                    routing_key=message.routing_key,
+                )
+
+                try:
+                    message_body = json.loads(message.body)
+                except json.decoder.JSONDecodeError:
+                    logger.error("Couldn't deserialize the message")
+                    await message.nack()
+                    continue
 
                 try:
                     await callback_func(
@@ -64,7 +69,7 @@ async def consumer(
                         routing_key=message.routing_key,
                     )
                 except Exception as exc:
-                    logger.error("Couldn't process message", exc=exc)
+                    logger.error("An error occurred while processing the message.", exc=exc)
                     await message.nack()
                     continue
 
