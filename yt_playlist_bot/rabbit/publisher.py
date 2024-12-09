@@ -4,7 +4,7 @@ import typing
 from abc import ABC, abstractmethod
 
 import structlog
-from aio_pika import connect_robust, Message
+from aio_pika import connect_robust, DeliveryMode, Message
 from aio_pika.abc import AbstractExchange, AbstractRobustChannel, AbstractRobustConnection
 
 logger = structlog.getLogger(__name__)
@@ -96,6 +96,7 @@ class AsyncRabbitMQPublisher(AbstractAsyncRabbitMQPublisher):
             Message(
                 body=json.dumps(message_body).encode("utf-8"),
                 message_id=message_id,
+                delivery_mode=DeliveryMode.PERSISTENT,
             ),
             routing_key=routing_key,
         )
