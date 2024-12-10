@@ -14,7 +14,12 @@ class Controller:
     def __init__(self, rabbit_publisher: AbstractAsyncRabbitMQPublisher) -> None:
         self.rabbit_publisher = rabbit_publisher
 
-    async def request_link(self, playlist_link: str, requester_telegram_id: int) -> None:
+    async def request_link(
+        self,
+        playlist_link: str,
+        requester_telegram_id: int,
+        request_uuid: str,
+    ) -> None:
         """
         Publish a request to a specific queue.
 
@@ -32,6 +37,7 @@ class Controller:
         )
 
         await self.rabbit_publisher.publish(
+            request_uuid=request_uuid,
             message_id=message_id,
             message_body=message_body,
             routing_key=settings.GET_VIDEO_FROM_PLAYLIST_EVENT,

@@ -19,6 +19,7 @@ class AbstractAsyncRabbitMQPublisher(ABC):
     @abstractmethod
     async def publish(
         self,
+        request_uuid: str,
         message_id: str,
         message_body: dict[str, typing.Any],
         routing_key: str,
@@ -78,6 +79,7 @@ class AsyncRabbitMQPublisher(AbstractAsyncRabbitMQPublisher):
 
     async def publish(
         self,
+        request_uuid: str,
         message_id: str,
         message_body: dict[str, typing.Any],
         routing_key: str,
@@ -96,6 +98,7 @@ class AsyncRabbitMQPublisher(AbstractAsyncRabbitMQPublisher):
             Message(
                 body=json.dumps(message_body).encode("utf-8"),
                 message_id=message_id,
+                correlation_id=request_uuid,
                 delivery_mode=DeliveryMode.PERSISTENT,
             ),
             routing_key=routing_key,

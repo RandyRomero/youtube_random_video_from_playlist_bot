@@ -25,4 +25,5 @@ async def request_id_insert_middleware(
         request_uuid=request_uuid,
         chat_id=chat_id,
     )
+    data["request_uuid"] = request_uuid
     return await handler(event, data)

@@ -50,6 +50,7 @@ async def consumer(
 
                 structlog.contextvars.clear_contextvars()
                 structlog.contextvars.bind_contextvars(
+                    request_uuid=message.correlation_id,
                     rabbit_message_id=message.message_id,
                     routing_key=message.routing_key,
                 )

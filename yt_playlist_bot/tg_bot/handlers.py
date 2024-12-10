@@ -20,7 +20,7 @@ class TelegramBotHandlers:
         await message.answer(text=MessageTexts.START_COMMAND_REPLY)
         logger.info("Replied to the /start command.")
 
-    async def reply_message_handler(self, message: Message) -> None:
+    async def reply_message_handler(self, message: Message, request_uuid: str) -> None:
         """Replies to any message."""
         logger.info("Got a new general message.")
 
@@ -35,6 +35,7 @@ class TelegramBotHandlers:
         await self.controller.request_link(
             playlist_link=message.text,
             requester_telegram_id=message.chat.id,
+            request_uuid=request_uuid,
         )
 
         await message.answer(text=MessageTexts.REQUEST_LINK_REPLY)
