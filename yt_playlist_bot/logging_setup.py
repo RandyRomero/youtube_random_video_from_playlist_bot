@@ -15,8 +15,6 @@ def setup_logging(log_level: str, json_logs: bool) -> None:
         structlog.stdlib.add_log_level,
         structlog.processors.CallsiteParameterAdder(
             {
-                structlog.processors.CallsiteParameter.FILENAME,
-                structlog.processors.CallsiteParameter.FUNC_NAME,
                 structlog.processors.CallsiteParameter.LINENO,
             },
         ),
