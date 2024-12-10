@@ -9,7 +9,7 @@ services:
         - BOT_TOKEN=${BOT_TOKEN}
         - ADMIN_TELEGRAM_ID=${ADMIN_TELEGRAM_ID}
         - LOG_LEVEL=${LOG_LEVEL}
-        - JSON_LOGS=&{JSON_LOGS}
+        - JSON_LOGS=${JSON_LOGS}
         - RABBIT_HOST=broker
         - RABBIT_PORT=${RABBIT_PORT}
         - RABBIT_USER=${RABBIT_USER}
@@ -25,7 +25,7 @@ services:
     environment:
       - BOT_TOKEN=${BOT_TOKEN}
       - LOG_LEVEL=${LOG_LEVEL}
-      - JSON_LOGS=&{JSON_LOGS}
+      - JSON_LOGS=${JSON_LOGS}
       - RABBIT_HOST=broker
       - RABBIT_PORT=${RABBIT_PORT}
       - RABBIT_USER=${RABBIT_USER}

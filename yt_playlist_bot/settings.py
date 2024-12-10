@@ -3,7 +3,7 @@ import os
 from aio_pika import ExchangeType
 
 LOG_LEVEL = os.environ.get("LOG_LEVEL", "INFO").upper()
-JSON_LOGS = os.getenv("ENV_VAR", "False").lower() in ("true", "1", "t")
+JSON_LOGS = os.environ.get("JSON_LOGS", "False").lower() in ("true", "1", "t")
 
 BOT_TOKEN = os.environ["BOT_TOKEN"]
 
