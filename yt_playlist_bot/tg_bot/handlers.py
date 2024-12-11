@@ -1,34 +1,42 @@
 import structlog
 from aiogram.types import Message
 
-from yt_playlist_bot.link_processor.main import process_link
+from yt_playlist_bot import constants
+from yt_playlist_bot.tg_bot.controller import Controller
+from yt_playlist_bot.tg_bot.message_texts import MessageTexts
 
 logger = structlog.getLogger(__name__)
 
 
-async def reply_start_command_message_handler(message: Message) -> None:
-    """Replies to /start command"""
-    logger.info("Got /start command.", chat_id=message.chat.id)
+class TelegramBotHandlers:
+    def __init__(self, controller: Controller) -> None:
+        self.controller = controller
 
-    await message.answer(
-        text="Sent me a link to a YouTube playlist (not a public one) and I will send you back to you a link to random video from this playlist.",  # noqa: E501 line too long
-    )
-    logger.info("Replied to the message.", chat_id=message.chat.id)
+    @staticmethod
+    async def reply_start_command_message_handler(message: Message) -> None:
+        """Replies to /start command"""
+        logger.info("Got /start command.")
 
+        await message.answer(text=MessageTexts.START_COMMAND_REPLY)
+        logger.info("Replied to the /start command.")
 
-async def reply_message_handler(message: Message) -> None:
-    """Replies to any message."""
-    logger.info("Got a new general message.", chat_id=message.chat.id)
+    async def reply_message_handler(self, message: Message, request_uuid: str) -> None:
+        """Replies to any message."""
+        logger.info("Got a new general message.")
 
-    try:
-        link = process_link(message.text or "")
-    except ValueError as err:
-        logger.error(err)
-        await message.answer(str(err))
-        return
+        if not message.text:
+            await message.answer(text=MessageTexts.GOT_EMPTY_MESSAGE)
+            return
 
-    await message.answer(
-        text=link,
-    )
+        if not message.text.startswith(constants.YOUTUBE_PLAYLIST_LINK_TEMPLATE):
+            await message.answer(text=MessageTexts.INVALID_YOUTUBE_PLAYLIST_LINK)
+            return
 
-    logger.info("Replied to the message", chat_id=message.chat.id)
+        await self.controller.request_link(
+            playlist_link=message.text,
+            requester_telegram_id=message.chat.id,
+            request_uuid=request_uuid,
+        )
+
+        await message.answer(text=MessageTexts.REQUEST_LINK_REPLY)
+        logger.info("Replied to the message")

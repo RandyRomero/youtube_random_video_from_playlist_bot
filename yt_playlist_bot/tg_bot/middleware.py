@@ -14,5 +14,16 @@ async def request_id_insert_middleware(
 ) -> tp.Any:
     request_uuid = str(uuid.uuid4())
     structlog.contextvars.clear_contextvars()
-    structlog.contextvars.bind_contextvars(request_id=request_uuid)
+
+    chat_id = None
+    try:
+        chat_id = event.message.chat.id  # type: ignore
+    except AttributeError as error:
+        logger.error("Incoming Telegram message doesn't have chat id", original_error=str(error))
+
+    structlog.contextvars.bind_contextvars(
+        request_uuid=request_uuid,
+        chat_id=chat_id,
+    )
+    data["request_uuid"] = request_uuid
     return await handler(event, data)

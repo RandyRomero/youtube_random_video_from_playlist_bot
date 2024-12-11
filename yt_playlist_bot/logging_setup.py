@@ -13,6 +13,11 @@ def setup_logging(log_level: str, json_logs: bool) -> None:
         structlog.contextvars.merge_contextvars,
         structlog.stdlib.add_logger_name,
         structlog.stdlib.add_log_level,
+        structlog.processors.CallsiteParameterAdder(
+            {
+                structlog.processors.CallsiteParameter.LINENO,
+            },
+        ),
         structlog.stdlib.PositionalArgumentsFormatter(),
         structlog.stdlib.ExtraAdder(),
         timestamper,
@@ -55,6 +60,8 @@ def setup_logging(log_level: str, json_logs: bool) -> None:
     handler.setFormatter(formatter)
     logging.getLogger("asyncio").setLevel(logging.ERROR)
     logging.getLogger("aiogram").setLevel(logging.ERROR)
+    logging.getLogger("aiormq").setLevel(logging.ERROR)
+    logging.getLogger("aio_pika").setLevel(logging.ERROR)
     root_logger = logging.getLogger()
     root_logger.addHandler(handler)
     root_logger.setLevel(log_level)
