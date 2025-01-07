@@ -4,9 +4,11 @@ import random
 import structlog
 from pytube import Playlist
 
-from yt_playlist_bot.constants import YOUTUBE_PLAYLIST_LINK_TEMPLATE
+from yt_playlist_bot import constants
 
 logger = structlog.getLogger(__name__)
+
+YOUTUBE_LINK_TEMPLATES = constants.YOUTUBE_PLAYLIST_LINK_TEMPLATES
 
 
 def parse_args() -> argparse.Namespace:
@@ -19,7 +21,9 @@ def parse_args() -> argparse.Namespace:
 
 
 def validate_link(link: str) -> None:
-    if not link.startswith(YOUTUBE_PLAYLIST_LINK_TEMPLATE):
+    if not (
+        link.startswith(YOUTUBE_LINK_TEMPLATES[0]) or link.startswith(YOUTUBE_LINK_TEMPLATES[1])
+    ):
         raise ValueError("Invalid link. This is a not a link to a YouTube playlist.")
 
 
