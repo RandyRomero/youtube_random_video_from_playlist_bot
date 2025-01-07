@@ -7,6 +7,8 @@ from yt_playlist_bot.tg_bot.message_texts import MessageTexts
 
 logger = structlog.getLogger(__name__)
 
+YOUTUBE_LINK_TEMPLATES = constants.YOUTUBE_PLAYLIST_LINK_TEMPLATES
+
 
 class TelegramBotHandlers:
     def __init__(self, controller: Controller) -> None:
@@ -25,11 +27,14 @@ class TelegramBotHandlers:
         logger.info("Got a new general message.")
 
         if not message.text:
-            await message.answer(text=MessageTexts.GOT_EMPTY_MESSAGE)
+            await message.reply(text=MessageTexts.GOT_EMPTY_MESSAGE)
             return
 
-        if not message.text.startswith(constants.YOUTUBE_PLAYLIST_LINK_TEMPLATE):
-            await message.answer(text=MessageTexts.INVALID_YOUTUBE_PLAYLIST_LINK)
+        if not (
+            message.text.startswith(YOUTUBE_LINK_TEMPLATES[0])
+            or message.text.startswith(YOUTUBE_LINK_TEMPLATES[1])
+        ):
+            await message.reply(text=MessageTexts.INVALID_YOUTUBE_PLAYLIST_LINK)
             return
 
         await self.controller.request_link(
@@ -38,5 +43,5 @@ class TelegramBotHandlers:
             request_uuid=request_uuid,
         )
 
-        await message.answer(text=MessageTexts.REQUEST_LINK_REPLY)
+        await message.reply(text=MessageTexts.REQUEST_LINK_REPLY)
         logger.info("Replied to the message")
