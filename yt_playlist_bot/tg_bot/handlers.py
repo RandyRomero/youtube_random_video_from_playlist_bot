@@ -40,6 +40,7 @@ class TelegramBotHandlers:
         await self.controller.request_link(
             playlist_link=message.text,
             requester_telegram_id=message.chat.id,
+            telegram_message_id=message.message_id,
             request_uuid=request_uuid,
         )
 

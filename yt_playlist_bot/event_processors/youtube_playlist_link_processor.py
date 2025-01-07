@@ -26,7 +26,8 @@ async def process_get_a_video_events(
     # maybe to keep an open bot in another consumer and send message via rabbitmq there
     bot = Bot(token=settings.BOT_TOKEN)
     chat_id = message_body["requester_telegram_id"]
-    await bot.send_message(chat_id=chat_id, text=msg_text)
+    telegram_message_id = message_body["telegram_message_id"]
+    await bot.send_message(chat_id=chat_id, text=msg_text, reply_to_message_id=telegram_message_id)
     logger.debug("Sent a link to a random video back to the chat", chat_id=chat_id)
     await bot.session.close()
     logger.debug("Closed the bot connection for the link processor.")

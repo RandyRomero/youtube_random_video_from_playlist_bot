@@ -17,6 +17,7 @@ class Controller:
     async def request_link(
         self,
         playlist_link: str,
+        telegram_message_id: int,
         requester_telegram_id: int,
         request_uuid: str,
     ) -> None:
@@ -29,6 +30,7 @@ class Controller:
         message_body = {
             "playlist_link": playlist_link,
             "requester_telegram_id": requester_telegram_id,
+            "telegram_message_id": telegram_message_id,
         }
 
         logger.info(
