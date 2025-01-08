@@ -24,6 +24,7 @@ services:
         condition: service_started
     environment:
       - BOT_TOKEN=${BOT_TOKEN}
+      - ADMIN_TELEGRAM_ID=${ADMIN_TELEGRAM_ID}
       - LOG_LEVEL=${LOG_LEVEL}
       - JSON_LOGS=${JSON_LOGS}
       - RABBIT_HOST=broker

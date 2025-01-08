@@ -12,6 +12,10 @@ async def main(event_loop: asyncio.AbstractEventLoop) -> None:
         event_loop=event_loop,
         rabbit_connect_url=settings.get_rabbit_connection_string(),
     )
+    await bot.bot.send_message(
+        chat_id=settings.ADMIN_TELEGRAM_ID,
+        text="Starting YouTube playlist bot...",
+    )
     await bot.start_polling()
 
 
