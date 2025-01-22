@@ -1,7 +1,7 @@
 services:
   tg_bot:
       build: ./
-      restart: always
+      restart: on-failure
       depends_on:
         broker:
           condition: service_healthy
@@ -18,7 +18,7 @@ services:
 
   link_event_listener:
     build: ./
-    restart: always
+    restart: on-failure
     depends_on:
       tg_bot:
         condition: service_started
