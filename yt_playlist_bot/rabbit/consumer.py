@@ -59,7 +59,7 @@ async def consumer(
                     message_body = json.loads(message.body)
                 except json.decoder.JSONDecodeError:
                     logger.error("Couldn't deserialize the message")
-                    await message.nack()
+                    await message.nack(requeue=False)
                     continue
 
                 try:
@@ -70,8 +70,12 @@ async def consumer(
                         routing_key=message.routing_key,
                     )
                 except Exception as exc:
-                    logger.error("An error occurred while processing the message.", exc=exc)
-                    await message.nack()
+                    logger.error(
+                        "An error occurred while processing the message.",
+                        request_uuid=message.correlation_id,
+                        exc=exc,
+                    )
+                    await message.nack(requeue=False)
                     continue
 
                 await message.ack()
