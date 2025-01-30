@@ -15,11 +15,14 @@ async def request_id_insert_middleware(
     request_uuid = str(uuid.uuid4())
     structlog.contextvars.clear_contextvars()
 
-    chat_id = None
-    try:
+    if getattr(event, "message", None):
         chat_id = event.message.chat.id  # type: ignore
-    except AttributeError as error:
-        logger.error("Incoming Telegram message doesn't have chat id", original_error=str(error))
+    elif getattr(event, "callback_query", None):
+        # it means we got a reply to an inline keyboard button instead of a message in a chat
+        chat_id = event.callback_query.from_user.id  # type: ignore
+    else:
+        logger.error("Incoming Telegram message doesn't have chat id. Will not process.")
+        return
 
     structlog.contextvars.bind_contextvars(
         request_uuid=request_uuid,

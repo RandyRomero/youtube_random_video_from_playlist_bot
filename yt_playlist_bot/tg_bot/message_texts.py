@@ -8,3 +8,4 @@ class MessageTexts(StrEnum):
     )
     INVALID_YOUTUBE_PLAYLIST_LINK = "The Invalid YouTube playlist link."
     GOT_EMPTY_MESSAGE = "I can't read your mind (yet)."
+    SOMETHING_WRONG_WITH_THE_MESSAGE = "Something is wrong with your message."

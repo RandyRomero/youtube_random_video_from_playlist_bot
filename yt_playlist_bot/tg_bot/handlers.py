@@ -1,7 +1,8 @@
 import structlog
-from aiogram.types import Message
+from aiogram.types import CallbackQuery, Message
 
 from yt_playlist_bot import constants
+from yt_playlist_bot.tg_bot.callbacks import OneMoreVideoCallback
 from yt_playlist_bot.tg_bot.controller import Controller
 from yt_playlist_bot.tg_bot.message_texts import MessageTexts
 
@@ -45,4 +46,28 @@ class TelegramBotHandlers:
         )
 
         await message.reply(text=MessageTexts.REQUEST_LINK_REPLY)
+        logger.info("Replied to the message")
+
+    async def reply_one_more_video_callback(
+        self,
+        query: CallbackQuery,
+        callback_data: OneMoreVideoCallback,
+        request_uuid: str,
+    ) -> None:
+        """Replies to button for one more video from the same playlist."""
+        link = f"https://youtube.com/playlist?list={callback_data.playlist_id}"
+
+        if not getattr(query, "message", None):
+            await query.answer(text=MessageTexts.SOMETHING_WRONG_WITH_THE_MESSAGE)
+            logger.warning("Callback query doesn't have message attribute set.")
+            return
+
+        await self.controller.request_link(
+            playlist_link=link,
+            requester_telegram_id=query.message.chat.id,  # type: ignore
+            telegram_message_id=query.message.message_id,  # type: ignore
+            request_uuid=request_uuid,
+        )
+
+        await query.answer(text=MessageTexts.REQUEST_LINK_REPLY)
         logger.info("Replied to the message")
