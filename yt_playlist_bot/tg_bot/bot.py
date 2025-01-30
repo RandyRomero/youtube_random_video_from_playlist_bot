@@ -7,6 +7,7 @@ from aiogram.filters import CommandStart
 from yt_playlist_bot import settings
 from yt_playlist_bot.rabbit.publisher import AsyncRabbitMQPublisher
 from yt_playlist_bot.tg_bot import middleware
+from yt_playlist_bot.tg_bot.callbacks import OneMoreVideoCallback
 from yt_playlist_bot.tg_bot.controller import Controller
 from yt_playlist_bot.tg_bot.handlers import TelegramBotHandlers
 
@@ -34,6 +35,9 @@ class TelegramBot:
         """Registers handlers that respond to user messages to the bot."""
         self.dispatcher.message(CommandStart())(self.handlers.reply_start_command_message_handler)
         self.dispatcher.message()(self.handlers.reply_message_handler)
+        self.dispatcher.callback_query(OneMoreVideoCallback.filter())(
+            self.handlers.reply_one_more_video_callback,
+        )
 
     def register_middleware(self) -> None:
         # https://docs.aiogram.dev/en/latest/dispatcher/middlewares.html
