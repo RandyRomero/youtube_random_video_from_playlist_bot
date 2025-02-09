@@ -1,6 +1,6 @@
 import asyncio
 import json
-import typing
+import typing as tp
 from asyncio import AbstractEventLoop
 
 import structlog
@@ -12,14 +12,15 @@ logger = structlog.getLogger(__name__)
 PREFETCH_COUNT = 100
 
 
-class CallbackType(typing.Protocol):
+class CallbackType(tp.Protocol):
     def __call__(
         self,
         event_loop: AbstractEventLoop,
         message_id: str,
-        message_body: dict[typing.Any, typing.Any],
+        message_body: dict[tp.Any, tp.Any],
         routing_key: str,
-    ) -> typing.Awaitable[None]:
+        **kwargs: tp.Any,
+    ) -> tp.Awaitable[None]:
         """A signature of a function that will be called to process a rabbit message."""
         pass
 
