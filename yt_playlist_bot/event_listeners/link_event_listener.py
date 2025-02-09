@@ -1,6 +1,8 @@
 import asyncio
 import typing
+from functools import partial
 
+import aiogram
 import structlog
 from aio_pika.abc import AbstractQueue
 
@@ -20,11 +22,12 @@ async def _process_message(
     message_id: str,
     message_body: dict[str, typing.Any],
     routing_key: str,
+    bot: aiogram.Bot,
 ) -> None:
     """Check routing key and choose corresponding message processor."""
     if routing_key != settings.GET_VIDEO_FROM_PLAYLIST_EVENT:
         raise KeyError("Unknown routing key.")
-    await process_get_a_video_events(event_loop, message_body)
+    await process_get_a_video_events(event_loop, message_body, bot)
 
 
 async def main(event_loop: asyncio.AbstractEventLoop) -> None:
@@ -50,11 +53,18 @@ async def main(event_loop: asyncio.AbstractEventLoop) -> None:
         routing_key=settings.GET_VIDEO_FROM_PLAYLIST_EVENT,
     )
 
+    bot = aiogram.Bot(token=settings.BOT_TOKEN)
+
     try:
-        await consumer(queue=queue, event_loop=event_loop, callback_func=_process_message)
+        await consumer(
+            queue=queue,
+            event_loop=event_loop,
+            callback_func=partial(_process_message, bot=bot),
+        )
     except Exception as exc:
         logger.error("Consumer closed unexpectedly.", exc=exc)
     finally:
         logger.info("Terminating consumer...")
         await channel.close()
         await connection.close()
+        await bot.close()

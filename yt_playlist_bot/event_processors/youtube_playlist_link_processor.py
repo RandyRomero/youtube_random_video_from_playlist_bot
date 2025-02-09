@@ -1,11 +1,11 @@
 import asyncio
 import typing
 
+import aiogram
 import structlog
-from aiogram import Bot
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
-from yt_playlist_bot import constants, settings
+from yt_playlist_bot import constants
 from yt_playlist_bot.link_processor.main import process_link
 from yt_playlist_bot.tg_bot.callbacks import OneMoreVideoCallback
 
@@ -26,6 +26,7 @@ def _extract_playlist_id(playlist_link: str) -> str:
 async def process_get_a_video_events(
     event_loop: asyncio.AbstractEventLoop,
     message_body: dict[str, typing.Any],
+    bot: aiogram.Bot,
 ) -> None:
     link = await event_loop.run_in_executor(
         None,
@@ -35,9 +36,6 @@ async def process_get_a_video_events(
 
     msg_text = f"There is your random video from your playlist: {link}"
 
-    # todo: find a way not to initialize it every time
-    # maybe to keep an open bot in another consumer and send message via rabbitmq there
-    bot = Bot(token=settings.BOT_TOKEN)
     chat_id = message_body["requester_telegram_id"]
     telegram_message_id = message_body["telegram_message_id"]
 
@@ -62,5 +60,3 @@ async def process_get_a_video_events(
     )
 
     logger.debug("Sent a link to a random video back to the chat", chat_id=chat_id)
-    await bot.session.close()
-    logger.debug("Closed the bot connection for the link processor.")
