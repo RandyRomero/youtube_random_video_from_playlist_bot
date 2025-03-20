@@ -1,4 +1,4 @@
-FROM python:3.12.5-slim-bookworm
+FROM python:3.12.5-slim-bookworm AS builder
 
 RUN apt-get update
 
@@ -12,4 +12,12 @@ RUN pip install -U pip \
 	&& . .venv/bin/activate \
 	&& uv pip install -r requirements-dev.txt
 
+FROM python:3.12.5-slim-bookworm AS final
+
+WORKDIR src
+
 COPY . .
+
+COPY --from=builder /src/.venv .venv
+
+ENV PATH="/src/.venv/bin:$PATH"
