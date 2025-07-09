@@ -31,7 +31,7 @@ disable_error_code = [
 ]
 
 [[tool.mypy.overrides]]
-module = "pytube"
+module = "pytubefix"
 ignore_missing_imports = true
 
 [tool.ruff]

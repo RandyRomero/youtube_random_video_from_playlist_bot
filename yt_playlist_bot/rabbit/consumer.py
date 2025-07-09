@@ -64,6 +64,7 @@ async def consumer(
                     continue
 
                 try:
+                    logger.info("Calling callback function")
                     await callback_func(
                         event_loop=event_loop,
                         message_id=message.message_id,
@@ -74,7 +75,7 @@ async def consumer(
                     logger.error(
                         "An error occurred while processing the message.",
                         request_uuid=message.correlation_id,
-                        exc=exc,
+                        exc_info=True,
                     )
                     await message.nack(requeue=False)
                     continue
