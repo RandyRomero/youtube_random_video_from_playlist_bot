@@ -2,7 +2,7 @@ import argparse
 import random
 
 import structlog
-from pytube import Playlist
+from pytubefix import Playlist
 
 from yt_playlist_bot import constants
 
