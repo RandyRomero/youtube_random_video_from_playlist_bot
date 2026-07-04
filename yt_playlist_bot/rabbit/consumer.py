@@ -71,7 +71,7 @@ async def consumer(
                         message_body=message_body,
                         routing_key=message.routing_key,
                     )
-                except Exception as exc:
+                except Exception:
                     logger.error(
                         "An error occurred while processing the message.",
                         request_uuid=message.correlation_id,
